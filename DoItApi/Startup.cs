@@ -29,9 +29,8 @@ namespace DoItApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
-            //TODO: Add connection string
             services.AddDbContext<DoItDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DoItDbContext")));
+            services.AddResponseCaching();
 
             services.AddAuthentication(options =>
             {
@@ -59,6 +58,7 @@ namespace DoItApi
 
             app.UseHttpsRedirection();
             doItDbContext.Database.EnsureCreated();
+            app.UseResponseCaching();
             app.UseAuthentication();
             app.UseMvc();
         }
