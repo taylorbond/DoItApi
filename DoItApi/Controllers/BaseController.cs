@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DoItApi.Controllers
 {
-    public class BaseController : ControllerBase
+    public abstract class BaseController : ControllerBase
     {
         public List<Claim> Claims => User.Claims.ToList();
         public string UserId => User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
