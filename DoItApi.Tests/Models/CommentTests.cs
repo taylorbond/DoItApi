@@ -1,5 +1,5 @@
 ﻿using System;
-using DoItApi.Models;
+using DIA.Core.Models;
 using FluentAssertions;
 using NUnit.Framework;
 

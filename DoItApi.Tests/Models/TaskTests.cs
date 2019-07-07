@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using DoItApi.Models;
+using DIA.Core.Models;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -14,7 +14,7 @@ namespace DoItApi.Tests.Models
         {
             var dateTimeOffset = new DateTimeOffset(DateTime.UtcNow);
             var alertDateTimeOffset = new DateTimeOffset(DateTime.UtcNow.AddHours(5));
-            var task = new Task
+            var task = new DiaTask
             {
                 Id = Guid.NewGuid().ToString(),
                 UserId = "myuserid",
@@ -31,7 +31,7 @@ namespace DoItApi.Tests.Models
         public void Task_ModelCreated_GetWorks()
         {
             var dateTimeOffset = new DateTimeOffset(DateTime.UtcNow);
-            var task = new Task
+            var task = new DiaTask
             {
                 Id = Guid.NewGuid().ToString(),
                 UserId = "myuserid",

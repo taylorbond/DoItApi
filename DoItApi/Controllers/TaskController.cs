@@ -1,5 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using DIA.Core.Exceptions;
 using DoItApi.Data;
+using DoItApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,21 +16,43 @@ namespace DoItApi.Controllers
     [Authorize]
     public class TaskController : BaseController
     {
-        private readonly DoItDbContext _doItDbContext;
+        private readonly ITaskService _taskService;
 
-        public TaskController(DoItDbContext doItDbContext)
+        public TaskController(ITaskService taskService)
         {
-            this._doItDbContext = doItDbContext;
+            _taskService = taskService;
         }
 
         [HttpGet]
-        [Route("Tasks"), MapToApiVersion("1.0")]
+        [Route(""), MapToApiVersion("1.0")]
         [ResponseCache(Duration = 5, Location = ResponseCacheLocation.Any)]
-        public IActionResult GetTasks()
+        public async Task<IActionResult> GetTasks()
         {
-            var tasks = _doItDbContext.Tasks.Include("Comments").Include("AlertTimes").Where(x => x.UserId == UserId);
+            try
+            {
+                var tasks = await _taskService.GetTasks(UserId);
+                return Ok(tasks);
+            }
+            catch (NoTasksFoundException)
+            {
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
 
-            return Ok(tasks);
+        [HttpPost]
+        [Route(""), MapToApiVersion("1.0")]
+        public IActionResult PostTask(Task task)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return Ok();
         }
     }
 }

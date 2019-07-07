@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace DoItApi.Models
+namespace DIA.Core.Models
 {
     public class AlertTime
     {

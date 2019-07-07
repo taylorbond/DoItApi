@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
 
-namespace DoItApi.Models
+namespace DIA.Core.Models
 {
-    public class Task
+    [Table("Tasks")]
+    public class DiaTask
     {
         public string Id { get; set; }
         [JsonIgnore]
@@ -17,7 +19,7 @@ namespace DoItApi.Models
         public ICollection<Comment> Comments { get; set; }
         public ICollection<AlertTime> AlertTimes { get; set; }
 
-        public Task()
+        public DiaTask()
         {
             Comments = new List<Comment>();
             AlertTimes = new List<AlertTime>();

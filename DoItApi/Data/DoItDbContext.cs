@@ -1,5 +1,4 @@
-﻿using System;
-using DoItApi.Models;
+﻿using DIA.Core.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace DoItApi.Data
@@ -10,6 +9,6 @@ namespace DoItApi.Data
         {
         }
 
-        public DbSet<Task> Tasks { get; set; }
+        public DbSet<DiaTask> Tasks { get; set; }
     }
 }

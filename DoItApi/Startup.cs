@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DoItApi.Data;
+using DoItApi.Services.ServiceExtensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -41,6 +42,8 @@ namespace DoItApi
                 options.Authority = "https://dev-doitauth.auth0.com/";
                 options.Audience = "https://localhost:5001/";
             });
+
+            services.AddTaskService();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

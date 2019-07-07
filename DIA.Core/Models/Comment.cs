@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
-namespace DoItApi.Models
+namespace DIA.Core.Models
 {
     public class Comment
     {
