@@ -1,7 +1,10 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DoItApi", "DoItApi\DoItApi.csproj", "{055B08AC-5809-40FC-8F72-8997E5DD8EB2}"
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28729.10
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DoItApi", "DoItApi\DoItApi.csproj", "{055B08AC-5809-40FC-8F72-8997E5DD8EB2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DoItApi.Tests", "DoItApi.Tests\DoItApi.Tests.csproj", "{86504B94-5598-4579-A977-1723A179678C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,5 +16,15 @@ Global
 		{055B08AC-5809-40FC-8F72-8997E5DD8EB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{055B08AC-5809-40FC-8F72-8997E5DD8EB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{055B08AC-5809-40FC-8F72-8997E5DD8EB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86504B94-5598-4579-A977-1723A179678C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86504B94-5598-4579-A977-1723A179678C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86504B94-5598-4579-A977-1723A179678C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86504B94-5598-4579-A977-1723A179678C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {13624788-F8B7-4468-A1EF-17712DC2385A}
 	EndGlobalSection
 EndGlobal

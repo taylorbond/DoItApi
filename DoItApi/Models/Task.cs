@@ -16,5 +16,11 @@ namespace DoItApi.Models
         public DateTimeOffset DueDateTime { get; set; }
         public ICollection<Comment> Comments { get; set; }
         public ICollection<AlertTime> AlertTimes { get; set; }
+
+        public Task()
+        {
+            Comments = new List<Comment>();
+            AlertTimes = new List<AlertTime>();
+        }
     }
 }

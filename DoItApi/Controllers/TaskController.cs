@@ -1,8 +1,11 @@
-﻿using System.Linq;
+﻿using System;
+using System.Diagnostics;
+using System.Linq;
 using System.Security.Claims;
 using DoItApi.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace DoItApi.Controllers
 {
@@ -10,7 +13,7 @@ namespace DoItApi.Controllers
     [Route("api/[controller]")]
     [ApiVersion("1.0")]
     [Authorize]
-    public class TaskController : ControllerBase
+    public class TaskController : BaseController
     {
         private readonly DoItDbContext _doItDbContext;
 
@@ -24,8 +27,7 @@ namespace DoItApi.Controllers
         [ResponseCache(Duration = 5, Location = ResponseCacheLocation.Any)]
         public IActionResult GetTasks()
         {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
-            var tasks = _doItDbContext.Tasks;
+            var tasks = _doItDbContext.Tasks.Include("Comments").Include("AlertTimes");
 
             return Ok(tasks);
         }
