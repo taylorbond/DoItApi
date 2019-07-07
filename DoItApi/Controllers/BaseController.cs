@@ -8,6 +8,16 @@ namespace DoItApi.Controllers
     public abstract class BaseController : ControllerBase
     {
         public List<Claim> Claims => User.Claims.ToList();
-        public string UserId => User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier).Value;
+
+        public string UserId
+        {
+            get
+            {
+                if (User == null) return null;
+                var claims = User.Claims;
+                var userId = claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+                return userId?.Value;
+            }
+        }
     }
 }

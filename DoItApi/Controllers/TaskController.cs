@@ -1,4 +1,5 @@
-﻿using DoItApi.Data;
+﻿using System.Linq;
+using DoItApi.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +24,7 @@ namespace DoItApi.Controllers
         [ResponseCache(Duration = 5, Location = ResponseCacheLocation.Any)]
         public IActionResult GetTasks()
         {
-            var tasks = _doItDbContext.Tasks.Include("Comments").Include("AlertTimes");
+            var tasks = _doItDbContext.Tasks.Include("Comments").Include("AlertTimes").Where(x => x.UserId == UserId);
 
             return Ok(tasks);
         }

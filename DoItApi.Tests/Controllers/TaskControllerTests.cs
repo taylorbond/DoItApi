@@ -31,7 +31,7 @@ namespace DoItApi.Tests.Controllers
             var task = new Task
             {
                 Id = Guid.NewGuid().ToString(),
-                UserId = "myuserid",
+                UserId = null, // intentionally null since we can't set user claims.
                 TaskDescription = "Here's my task description.",
                 DueDateTime = dateTimeOffset,
                 AlertTimes = new List<AlertTime> { new AlertTime { Id = Guid.NewGuid().ToString(), Time = alertDateTimeOffset } },
