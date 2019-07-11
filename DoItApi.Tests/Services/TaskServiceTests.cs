@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using DIA.Core.Exceptions;
 using DIA.Core.Models;
 using DoItApi.Data;
+using DoItApi.Services;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 
@@ -13,7 +17,7 @@ namespace DoItApi.Tests.Services
         private static DoItDbContext _dbContext;
         private static DiaTask _task;
 
-        [OneTimeSetUp]
+        [SetUp]
         public static void Init()
         {
             var options = new DbContextOptionsBuilder<DoItDbContext>()
@@ -38,6 +42,27 @@ namespace DoItApi.Tests.Services
             _dbContext.SaveChanges();
         }
 
+        [Test]
+        public async Task TaskService_GetTasks_TasksReturned()
+        {
+            var taskService = new TaskService(_dbContext);
 
+            var results = await taskService.GetTasks(null);
+
+            results.Should().Contain(_task);
+        }
+
+        [Test]
+        public void TaskService_TestName_Result()
+        {
+            var options = new DbContextOptionsBuilder<DoItDbContext>()
+                .UseInMemoryDatabase(Guid.NewGuid().ToString())
+                .Options;
+            _dbContext = new DoItDbContext(options);
+
+            var taskService = new TaskService(_dbContext);
+
+            Assert.ThrowsAsync<NoTasksFoundException>(() => taskService.GetTasks(null));
+        }
     }
 }
