@@ -15,7 +15,7 @@ namespace DIA.Core.Models
         [Required]
         public string TaskDescription { get; set; }
         [Required]
-        public DateTimeOffset DueDateTime { get; set; }
+        public DateTimeOffset DueDateTime { get; set; } = DateTimeOffset.UtcNow.Date;
         public ICollection<Comment> Comments { get; set; }
         public ICollection<AlertTime> AlertTimes { get; set; }
 

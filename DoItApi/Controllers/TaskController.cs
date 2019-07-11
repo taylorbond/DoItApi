@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
 using DIA.Core.Exceptions;
+using DIA.Core.Models;
 using DoItApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DoItApi.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
     [ApiVersion("1.0")]
     [Authorize]
@@ -42,14 +42,10 @@ namespace DoItApi.Controllers
 
         [HttpPost]
         [Route(""), MapToApiVersion("1.0")]
-        public IActionResult PostTask(Task task)
+        public async Task<IActionResult> PostTask(DiaTask task)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            return Ok();
+            await _taskService.AddTaskAsync(task).ConfigureAwait(false);
+            return Ok(task.DueDateTime.ToString());
         }
     }
 }

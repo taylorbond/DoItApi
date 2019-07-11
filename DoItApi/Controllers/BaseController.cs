@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DoItApi.Controllers
 {
+    [ApiController]
     public abstract class BaseController : ControllerBase
     {
         public List<Claim> Claims => User.Claims.ToList();
