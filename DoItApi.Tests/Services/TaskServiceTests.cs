@@ -87,7 +87,7 @@ namespace DoItApi.Tests.Services
 
             var taskService = new TaskService(_dbContext);
 
-            await taskService.UpdateTaskAsync(newTask.Id, newTask, null);
+            await taskService.UpdateTaskAsync(newTask);
 
             var foundTask = await _dbContext.Tasks.FindAsync(newTask.Id).ConfigureAwait(false);
             foundTask.TaskDescription.Should().Be(newTask.TaskDescription);
@@ -102,7 +102,7 @@ namespace DoItApi.Tests.Services
             await _dbContext.SaveChangesAsync().ConfigureAwait(false);
             var taskService = new TaskService(_dbContext);
 
-            Assert.ThrowsAsync<NoDatabaseObjectFoundException>(() => taskService.UpdateTaskAsync(task.Id, task, null));
+            Assert.ThrowsAsync<NoDatabaseObjectFoundException>(() => taskService.UpdateTaskAsync(task));
         }
 
         [Test]
@@ -113,7 +113,7 @@ namespace DoItApi.Tests.Services
             _dbContext.Tasks = null;
             var taskService = new TaskService(_dbContext);
 
-            Assert.ThrowsAsync<NoDatabaseObjectFoundException>(() => taskService.UpdateTaskAsync(task.Id, task, null));
+            Assert.ThrowsAsync<NoDatabaseObjectFoundException>(() => taskService.UpdateTaskAsync(task));
         }
 
         [Test]

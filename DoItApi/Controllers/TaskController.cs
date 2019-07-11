@@ -32,7 +32,7 @@ namespace DoItApi.Controllers
             }
             catch (NoTasksFoundException)
             {
-                return NoContent();
+                return NotFound();
             }
             catch (Exception e)
             {
@@ -42,12 +42,52 @@ namespace DoItApi.Controllers
 
         [HttpPost]
         [Route(""), MapToApiVersion("1.0")]
-        public async Task<IActionResult> PostTask(DiaTask task)
+        public async Task<IActionResult> PostTaskAsync(DiaTask task)
         {
             try
             {
+                task.UserId = UserId;
                 await _taskService.AddTaskAsync(task).ConfigureAwait(false);
-                return Ok(task.DueDateTime.ToString());
+                return Ok();
+            }
+            catch (DatabaseUpdateException e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpPut]
+        [Route(""), MapToApiVersion("1.0")]
+        public async Task<IActionResult> UpdateTaskAsync(DiaTask task)
+        {
+            try
+            {
+                task.UserId = UserId;
+                await _taskService.UpdateTaskAsync(task).ConfigureAwait(false);
+                return Ok();
+            }
+            catch (NoDatabaseObjectFoundException e)
+            {
+                return NotFound(e);
+            }
+            catch (DatabaseUpdateException e)
+            {
+                return BadRequest(e);
+            }
+        }
+
+        [HttpDelete]
+        [Route(""), MapToApiVersion("1.0")]
+        public async Task<IActionResult> DeleteTaskAsync(string id)
+        {
+            try
+            {
+                await _taskService.DeleteTaskAsync(id, UserId).ConfigureAwait(false);
+                return Ok();
+            }
+            catch (NoDatabaseObjectFoundException e)
+            {
+                return NotFound(e);
             }
             catch (DatabaseUpdateException e)
             {

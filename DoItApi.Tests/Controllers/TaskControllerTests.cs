@@ -61,14 +61,14 @@ namespace DoItApi.Tests.Controllers
         }
 
         [Test]
-        public async Task TaskController_GetTasksThrowsNoTaskFoundException_ReturnsNoContent()
+        public async Task TaskController_GetTasksThrowsNoTaskFoundException_ReturnsNotFound()
         {
             var taskService = new Mock<ITaskService>();
             taskService.Setup(x => x.GetTasksAsync(null)).ThrowsAsync(new NoTasksFoundException());
             var controller = new TaskController(taskService.Object);
 
             var response = await controller.GetTasksAsync();
-            var result = (NoContentResult) response;
+            var result = (NotFoundResult) response;
 
             result.Should().NotBeNull();
         }
@@ -92,8 +92,8 @@ namespace DoItApi.Tests.Controllers
             var taskService = new Mock<ITaskService>();
             var controller = new TaskController(taskService.Object);
 
-            var response = await controller.PostTask(_task);
-            var result = (OkObjectResult) response;
+            var response = await controller.PostTaskAsync(_task);
+            var result = (OkResult) response;
 
             result.Should().NotBeNull();
         }
@@ -106,7 +106,90 @@ namespace DoItApi.Tests.Controllers
                 .ThrowsAsync(new DatabaseUpdateException(new Exception()));
             var controller = new TaskController(taskService.Object);
 
-            var response = await controller.PostTask(_task);
+            var response = await controller.PostTaskAsync(_task);
+            var result = (BadRequestObjectResult)response;
+
+            result.Should().NotBeNull();
+        }
+
+        [Test]
+        public async Task TaskController_UpdateTask_OkResult()
+        {
+            var taskService = new Mock<ITaskService>();
+            var controller = new TaskController(taskService.Object);
+            _task.TaskDescription = $"{_task.Id} newly updated description.";
+
+            var response = await controller.UpdateTaskAsync(_task);
+            var result = (OkResult)response;
+
+            result.Should().NotBeNull();
+        }
+
+        [Test]
+        public async Task TaskController_UpdateTaskNoDatabaseObject_NotFoundResult()
+        {
+            var taskService = new Mock<ITaskService>();
+            taskService.Setup(x => x.UpdateTaskAsync(It.IsAny<DiaTask>()))
+                .ThrowsAsync(new NoDatabaseObjectFoundException(It.IsAny<string>()));
+            var controller = new TaskController(taskService.Object);
+            _task.TaskDescription = $"{_task.Id} newly updated description.";
+
+            var response = await controller.UpdateTaskAsync(_task);
+            var result = (NotFoundObjectResult)response;
+
+            result.Should().NotBeNull();
+        }
+
+        [Test]
+        public async Task TaskController_UpdateTaskDatabaseUpdateException_BadRequestResult()
+        {
+            var taskService = new Mock<ITaskService>();
+            taskService.Setup(x => x.UpdateTaskAsync(It.IsAny<DiaTask>()))
+                .ThrowsAsync(new DatabaseUpdateException(new Exception()));
+            var controller = new TaskController(taskService.Object);
+            _task.TaskDescription = $"{_task.Id} newly updated description.";
+
+            var response = await controller.UpdateTaskAsync(_task);
+            var result = (BadRequestObjectResult)response;
+
+            result.Should().NotBeNull();
+        }
+
+        [Test]
+        public async Task TaskController_DeleteTask_OkResult()
+        {
+            var taskService = new Mock<ITaskService>();
+            var controller = new TaskController(taskService.Object);
+
+            var response = await controller.DeleteTaskAsync(_task.Id);
+            var result = (OkResult)response;
+
+            result.Should().NotBeNull();
+        }
+
+        [Test]
+        public async Task TaskController_DeleteTest_NotFoundResult()
+        {
+            var taskService = new Mock<ITaskService>();
+            taskService.Setup(x => x.DeleteTaskAsync(_task.Id, null))
+                .ThrowsAsync(new NoDatabaseObjectFoundException(It.IsAny<string>()));
+            var controller = new TaskController(taskService.Object);
+
+            var response = await controller.DeleteTaskAsync(_task.Id);
+            var result = (NotFoundObjectResult)response;
+
+            result.Should().NotBeNull();
+        }
+
+        [Test]
+        public async Task TaskController_DeleteTest_BadRequestResult()
+        {
+            var taskService = new Mock<ITaskService>();
+            taskService.Setup(x => x.DeleteTaskAsync(_task.Id, null))
+                .ThrowsAsync(new DatabaseUpdateException(new Exception()));
+            var controller = new TaskController(taskService.Object);
+
+            var response = await controller.DeleteTaskAsync(_task.Id);
             var result = (BadRequestObjectResult)response;
 
             result.Should().NotBeNull();

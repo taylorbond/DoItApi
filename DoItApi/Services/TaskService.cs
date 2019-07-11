@@ -43,11 +43,11 @@ namespace DoItApi.Services
             }
         }
 
-        public async Task UpdateTaskAsync(string id, DiaTask task, string userId)
+        public async Task UpdateTaskAsync(DiaTask task)
         {
-            var entity = await FindTaskByIdForUserAsync(id, userId).ConfigureAwait(false);
+            var entity = await FindTaskByIdForUserAsync(task.Id, task.UserId).ConfigureAwait(false);
 
-            if (entity == null) throw new NoDatabaseObjectFoundException(id);
+            if (entity == null) throw new NoDatabaseObjectFoundException(task.Id);
 
             try
             {
