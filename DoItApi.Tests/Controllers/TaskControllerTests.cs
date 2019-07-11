@@ -7,6 +7,7 @@ using DoItApi.Controllers;
 using DoItApi.Services;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using NUnit.Framework;
 
@@ -80,6 +81,32 @@ namespace DoItApi.Tests.Controllers
             var controller = new TaskController(taskService.Object);
 
             var response = await controller.GetTasksAsync();
+            var result = (BadRequestObjectResult)response;
+
+            result.Should().NotBeNull();
+        }
+
+        [Test]
+        public async Task TaskController_PostTask_OkResult()
+        {
+            var taskService = new Mock<ITaskService>();
+            var controller = new TaskController(taskService.Object);
+
+            var response = await controller.PostTask(_task);
+            var result = (OkObjectResult) response;
+
+            result.Should().NotBeNull();
+        }
+
+        [Test]
+        public async Task TaskController_PostTask_BadRequestResult()
+        {
+            var taskService = new Mock<ITaskService>();
+            taskService.Setup(x => x.AddTaskAsync(It.IsAny<DiaTask>()))
+                .ThrowsAsync(new DatabaseUpdateException(new Exception()));
+            var controller = new TaskController(taskService.Object);
+
+            var response = await controller.PostTask(_task);
             var result = (BadRequestObjectResult)response;
 
             result.Should().NotBeNull();

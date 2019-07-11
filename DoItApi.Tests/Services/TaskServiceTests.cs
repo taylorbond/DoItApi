@@ -7,7 +7,6 @@ using DoItApi.Data;
 using DoItApi.Services;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using NUnit.Framework;
 
 namespace DoItApi.Tests.Services

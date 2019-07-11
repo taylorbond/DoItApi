@@ -4,11 +4,6 @@ namespace DIA.Core.Exceptions
 {
     public class DatabaseUpdateException : Exception
     {
-        public DatabaseUpdateException(string message) : base(message)
-        {
-            
-        }
-
         public DatabaseUpdateException(Exception e) : base(e.ToString())
         {
             

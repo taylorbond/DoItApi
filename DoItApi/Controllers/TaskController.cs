@@ -44,8 +44,15 @@ namespace DoItApi.Controllers
         [Route(""), MapToApiVersion("1.0")]
         public async Task<IActionResult> PostTask(DiaTask task)
         {
-            await _taskService.AddTaskAsync(task).ConfigureAwait(false);
-            return Ok(task.DueDateTime.ToString());
+            try
+            {
+                await _taskService.AddTaskAsync(task).ConfigureAwait(false);
+                return Ok(task.DueDateTime.ToString());
+            }
+            catch (DatabaseUpdateException e)
+            {
+                return BadRequest(e);
+            }
         }
     }
 }
