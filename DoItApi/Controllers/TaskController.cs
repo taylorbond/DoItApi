@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using DIA.Core.Exceptions;
-using DoItApi.Data;
 using DoItApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace DoItApi.Controllers
 {
@@ -26,11 +23,11 @@ namespace DoItApi.Controllers
         [HttpGet]
         [Route(""), MapToApiVersion("1.0")]
         [ResponseCache(Duration = 5, Location = ResponseCacheLocation.Any)]
-        public async Task<IActionResult> GetTasks()
+        public async Task<IActionResult> GetTasksAsync()
         {
             try
             {
-                var tasks = await _taskService.GetTasks(UserId);
+                var tasks = await _taskService.GetTasks(UserId).ConfigureAwait(false);
                 return Ok(tasks);
             }
             catch (NoTasksFoundException)
