@@ -95,6 +95,7 @@ namespace DoItApi.Controllers
             }
         }
 
-
+        // TODO: Add get, post, update, delete Comments
+        // TODO: Add get, post, update, delete Alerts
     }
 }
