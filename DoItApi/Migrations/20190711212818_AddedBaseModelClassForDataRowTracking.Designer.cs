@@ -4,14 +4,16 @@ using DoItApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DoItApi.Migrations
 {
     [DbContext(typeof(DoItDbContext))]
-    partial class DoItDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190711212818_AddedBaseModelClassForDataRowTracking")]
+    partial class AddedBaseModelClassForDataRowTracking
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -23,8 +25,6 @@ namespace DoItApi.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
-
-                    b.Property<DateTimeOffset>("CreatedDate");
 
                     b.Property<string>("DiaTaskId");
 
@@ -48,8 +48,6 @@ namespace DoItApi.Migrations
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTimeOffset>("CreatedDate");
-
                     b.Property<string>("DiaTaskId");
 
                     b.Property<bool>("IsDeleted");
@@ -72,8 +70,6 @@ namespace DoItApi.Migrations
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
-
-                    b.Property<DateTimeOffset>("CreatedDate");
 
                     b.Property<DateTimeOffset>("DueDateTime");
 

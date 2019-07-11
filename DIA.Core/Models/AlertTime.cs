@@ -3,9 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DIA.Core.Models
 {
-    public class AlertTime
+    public class AlertTime : BaseModel
     {
-        public string Id { get; set; }
         [Required]
         public DateTimeOffset Time { get; set; }
     }
