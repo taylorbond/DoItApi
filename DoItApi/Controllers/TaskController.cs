@@ -27,7 +27,7 @@ namespace DoItApi.Controllers
         {
             try
             {
-                var tasks = await _taskService.GetTasks(UserId).ConfigureAwait(false);
+                var tasks = await _taskService.GetTasksAsync(UserId).ConfigureAwait(false);
                 return Ok(tasks);
             }
             catch (NoTasksFoundException)

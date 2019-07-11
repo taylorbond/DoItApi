@@ -17,12 +17,12 @@ namespace DoItApi.Services
             _doItDbContext = doItDbContext;
         }
 
-        public async Task<IEnumerable<DiaTask>> GetTasks(string userId)
+        public async Task<IEnumerable<DiaTask>> GetTasksAsync(string userId)
         {
             var tasks = await _doItDbContext.Tasks
                 .Include("Comments").Include("AlertTimes")
                 .Where(x => x.UserId == userId)
-                .ToListAsync();
+                .ToListAsync().ConfigureAwait(false);
 
             if (!tasks.Any()) throw new NoTasksFoundException();
 

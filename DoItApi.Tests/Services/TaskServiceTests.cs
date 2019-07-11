@@ -47,7 +47,7 @@ namespace DoItApi.Tests.Services
         {
             var taskService = new TaskService(_dbContext);
 
-            var results = await taskService.GetTasks(null);
+            var results = await taskService.GetTasksAsync(null);
 
             results.Should().Contain(_task);
         }
@@ -62,7 +62,7 @@ namespace DoItApi.Tests.Services
 
             var taskService = new TaskService(_dbContext);
 
-            Assert.ThrowsAsync<NoTasksFoundException>(() => taskService.GetTasks(null));
+            Assert.ThrowsAsync<NoTasksFoundException>(() => taskService.GetTasksAsync(null));
         }
     }
 }

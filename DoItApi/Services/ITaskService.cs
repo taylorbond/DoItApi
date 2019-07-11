@@ -6,6 +6,6 @@ namespace DoItApi.Services
 {
     public interface ITaskService
     {
-        Task<IEnumerable<DiaTask>> GetTasks(string userId);
+        Task<IEnumerable<DiaTask>> GetTasksAsync(string userId);
     }
 }
