@@ -19,6 +19,12 @@ namespace DIA.Core.Models
         public ICollection<Comment> Comments { get; set; }
         public ICollection<AlertTime> AlertTimes { get; set; }
 
+        public DateTimeOffset CreatedDate { get; set; } = DateTimeOffset.UtcNow;
+
+        public DateTimeOffset UpdatedDate { get; set; } = DateTimeOffset.UtcNow;
+
+        public bool IsDeleted { get; set; } = false;
+
         public DiaTask()
         {
             Comments = new List<Comment>();

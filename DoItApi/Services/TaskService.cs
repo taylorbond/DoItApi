@@ -51,7 +51,7 @@ namespace DoItApi.Services
 
             try
             {
-
+                entity.UpdatedDate = DateTimeOffset.UtcNow;
                 entity.TaskDescription = task.TaskDescription;
                 entity.DueDateTime = task.DueDateTime;
                 entity.AlertTimes = task.AlertTimes;
@@ -75,7 +75,7 @@ namespace DoItApi.Services
 
             try
             {
-                _doItDbContext.Tasks.Remove(entity);
+                entity.IsDeleted = true;
                 await _doItDbContext.SaveChangesAsync().ConfigureAwait(false);
             }
             catch (Exception e)

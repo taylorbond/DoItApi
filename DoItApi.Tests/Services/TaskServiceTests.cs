@@ -123,7 +123,7 @@ namespace DoItApi.Tests.Services
 
             await taskService.DeleteTaskAsync(_task.Id, null);
 
-            _dbContext.Tasks.Should().NotContain(_task);
+            _dbContext.Tasks.FindAsync(_task.Id).Result.IsDeleted.Should().Be(true);
         }
 
         [Test]
