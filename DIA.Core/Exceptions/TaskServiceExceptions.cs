@@ -6,4 +6,8 @@ namespace DIA.Core.Exceptions
     {
 
     }
+
+    public class NoCommentsFoundException : Exception
+    {
+    }
 }
