@@ -17,4 +17,12 @@ namespace DIA.Core.Exceptions
             
         }
     }
+
+    public class NoAlertsFoundException : Exception
+    {
+        public NoAlertsFoundException(string message) : base(message)
+        {
+
+        }
+    }
 }

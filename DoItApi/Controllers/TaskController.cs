@@ -198,6 +198,9 @@ namespace DoItApi.Controllers
         [Route("{taskId}/comments/{commentId}"), MapToApiVersion("1.0")]
         public async Task<IActionResult> UpdateCommentAsync(string taskId, string commentId, [FromBody] Comment comment)
         {
+            if (string.IsNullOrWhiteSpace(taskId)) return BadRequest("TaskId is required.");
+            if (string.IsNullOrWhiteSpace(commentId)) return BadRequest("CommentId is required.");
+
             try
             {
                 comment.UserId = UserId;
@@ -243,7 +246,7 @@ namespace DoItApi.Controllers
                 var alerts = await _taskService.GetAlertsAsync(UserId, taskId).ConfigureAwait(false);
                 return Ok(alerts);
             }
-            catch (NoCommentsFoundException e)
+            catch (NoAlertsFoundException e)
             {
                 return NotFound(e.Message);
             }
@@ -263,6 +266,10 @@ namespace DoItApi.Controllers
                 await _taskService.AddAlertAsync(taskId, alert).ConfigureAwait(false);
                 return Ok();
             }
+            catch (NoDatabaseObjectFoundException e)
+            {
+                return NotFound(e.Message);
+            }
             catch (DatabaseUpdateException e)
             {
                 return BadRequest(e.Message);
@@ -281,7 +288,7 @@ namespace DoItApi.Controllers
             {
                 alert.UserId = UserId;
                 alert.Id = alertId; // TODO: Is this needed, or will the client send the comment across with the Id already assigned?
-                await _taskService.UpdateAlertAsync(taskId, alert).ConfigureAwait(false);
+                await _taskService.UpdateAlertAsync(taskId, alert).ConfigureAwait(true);
                 return Ok();
             }
             catch (NoDatabaseObjectFoundException e)

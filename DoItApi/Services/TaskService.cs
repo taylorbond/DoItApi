@@ -201,7 +201,7 @@ namespace DoItApi.Services
                     x.IsDeleted == false);
             var alertsList = alerts.ToList();
             if (!alertsList.Any())
-                throw new NoCommentsFoundException($"No alerts found for task {taskId}.");
+                throw new NoAlertsFoundException($"No alerts found for task {taskId}.");
 
             return alertsList;
         }
