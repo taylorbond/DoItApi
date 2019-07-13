@@ -24,9 +24,19 @@ namespace DoItApi.Services
             var tasks = await GetTasksForUserIdAsync(userId).ConfigureAwait(false);
 
             var taskList = tasks.ToList();
-            if (!taskList.Any()) throw new NoTasksFoundException();
+            if (!taskList.Any()) throw new NoTasksFoundException("No tasks found.");
 
-            return taskList;
+            return taskList.OrderBy(x => x.CreatedDate);
+        }
+
+        public async Task<IEnumerable<DiaTask>> GetTasksWithDetailsAsync(string userId)
+        {
+            var tasks = await GetTasksWithDetailsForUserIdAsync(userId).ConfigureAwait(false);
+
+            var taskList = tasks.ToList();
+            if (!taskList.Any()) throw new NoTasksFoundException("No tasks found.");
+
+            return taskList.OrderBy(x => x.CreatedDate);
         }
 
         public async Task AddTaskAsync(DiaTask task)
@@ -46,7 +56,7 @@ namespace DoItApi.Services
         {
             var entity = await FindTaskByIdForUserAsync(task.Id, task.UserId).ConfigureAwait(false);
 
-            if (entity == null) throw new NoDatabaseObjectFoundException(task.Id);
+            if (entity == null) throw new NoDatabaseObjectFoundException($"Task {task.Id} was not found.");
 
             try
             {
@@ -55,6 +65,7 @@ namespace DoItApi.Services
                 entity.DueDateTime = task.DueDateTime;
                 entity.AlertTimes = task.AlertTimes;
                 entity.Comments = task.Comments;
+                entity.IsCompleted = task.IsCompleted;
 
                 _doItDbContext.Entry(entity).State = EntityState.Modified;
 
@@ -70,12 +81,33 @@ namespace DoItApi.Services
         {
             var entity = await FindTaskByIdForUserAsync(id, userId).ConfigureAwait(false);
 
-            if (entity == null) throw new NoDatabaseObjectFoundException(id);
+            if (entity == null) throw new NoDatabaseObjectFoundException($"Task {id} was not found.");
 
             try
             {
                 entity.UpdatedDate = DateTimeOffset.UtcNow;
                 entity.IsDeleted = true;
+                await _doItDbContext.SaveChangesAsync().ConfigureAwait(false);
+            }
+            catch (Exception e)
+            {
+                throw new DatabaseUpdateException(e);
+            }
+        }
+
+        public async Task MarkTaskCompleteStatusAsync(string taskId, string userId, bool isComplete)
+        {
+            var entity = await FindTaskByIdForUserAsync(taskId, userId).ConfigureAwait(false);
+
+            if (entity == null) throw new NoDatabaseObjectFoundException($"Task {taskId} was not found.");
+
+            try
+            {
+                entity.UpdatedDate = DateTimeOffset.UtcNow;
+                entity.IsCompleted = isComplete;
+
+                _doItDbContext.Entry(entity).State = EntityState.Modified;
+
                 await _doItDbContext.SaveChangesAsync().ConfigureAwait(false);
             }
             catch (Exception e)
@@ -91,7 +123,7 @@ namespace DoItApi.Services
                     x.IsDeleted == false);
             var commentsList = comments.ToList();
             if (!commentsList.Any())
-                throw new NoCommentsFoundException();
+                throw new NoCommentsFoundException($"No comments found for Task {taskId}.");
 
             return commentsList;
         }
@@ -102,7 +134,7 @@ namespace DoItApi.Services
             var task = await FindTaskByIdForUserAsync(taskId, comment.UserId).ConfigureAwait(false);
 
             if (task == null)
-                throw new NoTasksFoundException();
+                throw new NoDatabaseObjectFoundException($"Task {taskId} was not found.");
 
             try
             {
@@ -169,18 +201,18 @@ namespace DoItApi.Services
                     x.IsDeleted == false);
             var alertsList = alerts.ToList();
             if (!alertsList.Any())
-                throw new NoCommentsFoundException();
+                throw new NoCommentsFoundException($"No alerts found for task {taskId}.");
 
             return alertsList;
         }
 
         public async Task AddAlertAsync(string taskId, AlertTime alert)
         {
-            // Verify task exists
+            if (alert.Time <= DateTimeOffset.UtcNow) throw new ArgumentException("Alert time cannot be in the past.");
             var task = await FindTaskByIdForUserAsync(taskId, alert.UserId).ConfigureAwait(false);
 
             if (task == null)
-                throw new NoTasksFoundException();
+                throw new NoDatabaseObjectFoundException($"Task {taskId} was not found.");
 
             try
             {
@@ -196,8 +228,11 @@ namespace DoItApi.Services
 
         public async Task UpdateAlertAsync(string taskId, AlertTime alert)
         {
+            if (alert.Time <= DateTimeOffset.UtcNow) throw new ArgumentException("Alert time cannot be in the past.");
             var task = await FindTaskByIdForUserAsync(taskId, alert.UserId).ConfigureAwait(false);
-            if (task == null) throw new NoDatabaseObjectFoundException($"Task {taskId} was not found.");
+
+            if (task == null)
+                throw new NoDatabaseObjectFoundException($"Task {taskId} was not found.");
 
             var foundAlert = task.AlertTimes.FirstOrDefault(x => x.Id == alert.Id);
             if (foundAlert == null) throw new NoDatabaseObjectFoundException($"Alert {alert.Id} was not found for Task {taskId}.");
@@ -241,6 +276,12 @@ namespace DoItApi.Services
         }
 
         private async Task<IEnumerable<DiaTask>> GetTasksForUserIdAsync(string userId, bool includeDeleted = false)
+        {
+            return await _doItDbContext.Tasks
+                .Where(x => x.UserId == userId && (x.IsDeleted == false || includeDeleted))
+                .ToListAsync().ConfigureAwait(false);
+        }
+        private async Task<IEnumerable<DiaTask>> GetTasksWithDetailsForUserIdAsync(string userId, bool includeDeleted = false)
         {
             return await _doItDbContext.Tasks
                 .Include("Comments").Include("AlertTimes")

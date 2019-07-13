@@ -40,6 +40,26 @@ namespace DoItApi.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("WithDetails"), MapToApiVersion("1.0")]
+        [ResponseCache(Duration = 5, Location = ResponseCacheLocation.Any)]
+        public async Task<IActionResult> GetTasksWithDetailsAsync()
+        {
+            try
+            {
+                var tasks = await _taskService.GetTasksWithDetailsAsync(UserId).ConfigureAwait(false);
+                return Ok(tasks);
+            }
+            catch (NoTasksFoundException)
+            {
+                return NotFound();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
         [HttpPost]
         [Route(""), MapToApiVersion("1.0")]
         public async Task<IActionResult> PostTaskAsync(DiaTask task)
@@ -52,7 +72,7 @@ namespace DoItApi.Controllers
             }
             catch (DatabaseUpdateException e)
             {
-                return BadRequest(e);
+                return BadRequest(e.Message);
             }
         }
 
@@ -60,6 +80,8 @@ namespace DoItApi.Controllers
         [Route(""), MapToApiVersion("1.0")]
         public async Task<IActionResult> UpdateTaskAsync(DiaTask task)
         {
+            if (string.IsNullOrWhiteSpace(task.Id)) return BadRequest("Id on task is required.");
+
             try
             {
                 task.UserId = UserId;
@@ -68,30 +90,68 @@ namespace DoItApi.Controllers
             }
             catch (NoDatabaseObjectFoundException e)
             {
-                return NotFound(e);
+                return NotFound(e.Message);
             }
             catch (DatabaseUpdateException e)
             {
-                return BadRequest(e);
+                return BadRequest(e.Message);
             }
         }
 
         [HttpDelete]
-        [Route(""), MapToApiVersion("1.0")]
-        public async Task<IActionResult> DeleteTaskAsync(string id)
+        [Route("{taskId}"), MapToApiVersion("1.0")]
+        public async Task<IActionResult> DeleteTaskAsync(string taskId)
         {
             try
             {
-                await _taskService.DeleteTaskAsync(id, UserId).ConfigureAwait(false);
+                await _taskService.DeleteTaskAsync(taskId, UserId).ConfigureAwait(false);
                 return Ok();
             }
             catch (NoDatabaseObjectFoundException e)
             {
-                return NotFound(e);
+                return NotFound(e.Message);
             }
             catch (DatabaseUpdateException e)
             {
-                return BadRequest(e);
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpPut]
+        [Route("{taskId}/complete"), MapToApiVersion("1.0")]
+        public async Task<IActionResult> MarkTaskComplete(string taskId)
+        {
+            try
+            {
+                await _taskService.MarkTaskCompleteStatusAsync(taskId, UserId, true).ConfigureAwait(false);
+                return Ok();
+            }
+            catch (NoDatabaseObjectFoundException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (DatabaseUpdateException e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpPut]
+        [Route("{taskId}/incomplete"), MapToApiVersion("1.0")]
+        public async Task<IActionResult> MarkTaskIncomplete(string taskId)
+        {
+            try
+            {
+                await _taskService.MarkTaskCompleteStatusAsync(taskId, UserId, false).ConfigureAwait(false);
+                return Ok();
+            }
+            catch (NoDatabaseObjectFoundException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (DatabaseUpdateException e)
+            {
+                return BadRequest(e.Message);
             }
         }
 
@@ -124,9 +184,13 @@ namespace DoItApi.Controllers
                 await _taskService.AddCommentAsync(taskId, comment).ConfigureAwait(false);
                 return Ok();
             }
+            catch (NoDatabaseObjectFoundException e)
+            {
+                return NotFound(e.Message);
+            }
             catch (DatabaseUpdateException e)
             {
-                return BadRequest(e);
+                return BadRequest(e.Message);
             }
         }
 
@@ -143,11 +207,11 @@ namespace DoItApi.Controllers
             }
             catch (NoDatabaseObjectFoundException e)
             {
-                return NotFound(e);
+                return NotFound(e.Message);
             }
             catch (DatabaseUpdateException e)
             {
-                return BadRequest(e);
+                return BadRequest(e.Message);
             }
         }
 
@@ -162,15 +226,13 @@ namespace DoItApi.Controllers
             }
             catch (NoDatabaseObjectFoundException e)
             {
-                return NotFound(e);
+                return NotFound(e.Message);
             }
             catch (DatabaseUpdateException e)
             {
-                return BadRequest(e);
+                return BadRequest(e.Message);
             }
         }
-
-        // TODO: Add get, post, update, delete Alerts
 
         [HttpGet]
         [Route("{taskId}/alerts"), MapToApiVersion("1.0")]
@@ -181,9 +243,9 @@ namespace DoItApi.Controllers
                 var alerts = await _taskService.GetAlertsAsync(UserId, taskId).ConfigureAwait(false);
                 return Ok(alerts);
             }
-            catch (NoCommentsFoundException)
+            catch (NoCommentsFoundException e)
             {
-                return NotFound();
+                return NotFound(e.Message);
             }
             catch (Exception e)
             {
@@ -203,7 +265,11 @@ namespace DoItApi.Controllers
             }
             catch (DatabaseUpdateException e)
             {
-                return BadRequest(e);
+                return BadRequest(e.Message);
+            }
+            catch (ArgumentException e)
+            {
+                return BadRequest(e.Message);
             }
         }
 
@@ -220,11 +286,15 @@ namespace DoItApi.Controllers
             }
             catch (NoDatabaseObjectFoundException e)
             {
-                return NotFound(e);
+                return NotFound(e.Message);
             }
             catch (DatabaseUpdateException e)
             {
-                return BadRequest(e);
+                return BadRequest(e.Message);
+            }
+            catch (ArgumentException e)
+            {
+                return BadRequest(e.Message);
             }
         }
 
@@ -239,11 +309,11 @@ namespace DoItApi.Controllers
             }
             catch (NoDatabaseObjectFoundException e)
             {
-                return NotFound(e);
+                return NotFound(e.Message);
             }
             catch (DatabaseUpdateException e)
             {
-                return BadRequest(e);
+                return BadRequest(e.Message);
             }
         }
     }

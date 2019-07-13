@@ -7,6 +7,7 @@ namespace DoItApi.Services
     public interface ITaskService
     {
         Task<IEnumerable<DiaTask>> GetTasksAsync(string userId);
+        Task<IEnumerable<DiaTask>> GetTasksWithDetailsAsync(string userId);
         Task AddTaskAsync(DiaTask task);
         Task UpdateTaskAsync(DiaTask task);
         Task DeleteTaskAsync(string id, string userId);
@@ -18,5 +19,6 @@ namespace DoItApi.Services
         Task AddAlertAsync(string taskId, AlertTime alert);
         Task UpdateAlertAsync(string taskId, AlertTime alert);
         Task DeleteAlertAsync(string taskId, string alertId, string userId);
+        Task MarkTaskCompleteStatusAsync(string taskId, string userId, bool isComplete);
     }
 }

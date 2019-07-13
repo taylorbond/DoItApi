@@ -14,6 +14,8 @@ namespace DIA.Core.Models
         public DateTimeOffset DueDateTime { get; set; } = DateTimeOffset.UtcNow.Date;
         public ICollection<Comment> Comments { get; set; }
         public ICollection<AlertTime> AlertTimes { get; set; }
+
+        public bool IsCompleted { get; set; }
         public DiaTask()
         {
             Comments = new List<Comment>();
