@@ -64,7 +64,7 @@ namespace DoItApi.Tests.Controllers
         public async Task TaskController_GetTasksThrowsNoTaskFoundException_ReturnsNotFound()
         {
             var taskService = new Mock<ITaskService>();
-            taskService.Setup(x => x.GetTasksAsync(null)).ThrowsAsync(new NoTasksFoundException());
+            taskService.Setup(x => x.GetTasksAsync(null)).ThrowsAsync(new NoTasksFoundException(It.IsAny<string>()));
             var controller = new TaskController(taskService.Object);
 
             var response = await controller.GetTasksAsync();
