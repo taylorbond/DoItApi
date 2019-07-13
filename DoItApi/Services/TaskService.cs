@@ -60,12 +60,7 @@ namespace DoItApi.Services
 
                 if (entity == null) throw new NoDatabaseObjectFoundException($"Task {task.Id} was not found.");
 
-                entity.UpdatedDate = DateTimeOffset.UtcNow;
-                entity.TaskDescription = task.TaskDescription;
-                entity.DueDateTime = task.DueDateTime;
-                entity.AlertTimes = task.AlertTimes;
-                entity.Comments = task.Comments;
-                entity.IsCompleted = task.IsCompleted;
+                UpdateEntityWithTask(task, entity);
 
                 _doItDbContext.Entry(entity).State = EntityState.Modified;
 
@@ -79,6 +74,16 @@ namespace DoItApi.Services
             {
                 throw new DatabaseUpdateException(e);
             }
+        }
+
+        private static void UpdateEntityWithTask(DiaTask task, DiaTask entity)
+        {
+            entity.UpdatedDate = DateTimeOffset.UtcNow;
+            entity.TaskDescription = task.TaskDescription;
+            entity.DueDateTime = task.DueDateTime;
+            entity.AlertTimes = task.AlertTimes;
+            entity.Comments = task.Comments;
+            entity.IsCompleted = task.IsCompleted;
         }
 
         public async Task DeleteTaskAsync(string id, string userId)
@@ -181,14 +186,8 @@ namespace DoItApi.Services
 
                 await _doItDbContext.SaveChangesAsync().ConfigureAwait(false);
             }
-            catch (NoDatabaseObjectFoundException e)
-            {
-                throw;
-            }
-            catch (Exception e)
-            {
-                throw new DatabaseUpdateException(e);
-            }
+            catch (NoDatabaseObjectFoundException) { throw; }
+            catch (Exception e) { throw new DatabaseUpdateException(e); }
         }
 
         public async Task DeleteCommentAsync(string taskId, string commentId, string userId)

@@ -1,5 +1,6 @@
 ﻿using DoItApi.Data;
 using DoItApi.Services.ServiceExtensions;
+using DoItApi.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -22,9 +23,12 @@ namespace DoItApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<Auth0Settings>(Configuration.GetSection(nameof(Auth0Settings)));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddDbContext<DoItDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DoItDbContext")));
             services.AddResponseCaching();
+
+            var auth0Settings = Configuration.GetSection(nameof(Auth0Settings)).Get<Auth0Settings>();
 
             services.AddAuthentication(options =>
             {
@@ -32,8 +36,8 @@ namespace DoItApi
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(options =>
             {
-                options.Authority = "https://dev-doitauth.auth0.com/";
-                options.Audience = "https://localhost:5001/";
+                options.Authority = auth0Settings.Authority;
+                options.Audience = auth0Settings.Audience;
             });
 
             services.AddTaskService();
@@ -53,7 +57,7 @@ namespace DoItApi
             }
 
             app.UseHttpsRedirection();
-            doItDbContext.Database.EnsureCreated();
+            doItDbContext.Database.EnsureCreated(); //Migrate()
             app.UseResponseCaching();
             app.UseAuthentication();
             app.UseMvc();
