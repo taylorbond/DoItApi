@@ -6,7 +6,6 @@ using DoItApi.Data;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
-using Moq;
 using NUnit.Framework;
 
 namespace DoItApi.Tests.Data
@@ -36,12 +35,12 @@ namespace DoItApi.Tests.Data
                 Id = Guid.NewGuid().ToString(),
                 UserId = "myuserid",
                 TaskDescription = "Here's my task description.",
+                CreatedDate = DateTimeOffset.UtcNow,
                 DueDateTime = dateTimeOffset,
                 AlertTimes = new List<AlertTime> { new AlertTime { Id = Guid.NewGuid().ToString(), Time = alertDateTimeOffset } },
                 Comments = new List<Comment> { new Comment { Id = Guid.NewGuid().ToString(), Text = "Hi" } }
             };
-            _dbContext.Tasks = new InternalDbSet<DiaTask>(_dbContext);
-            _dbContext.Tasks.Add(task);
+            _dbContext.Tasks = new InternalDbSet<DiaTask>(_dbContext) {task};
             await _dbContext.SaveChangesAsync().ConfigureAwait(false);
 
             _dbContext.Tasks.Should().Contain(task);
