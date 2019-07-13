@@ -15,10 +15,16 @@ namespace DoItApi.Tests.Services.ServiceExtensions
         public void ConfigureServices_RegistersDependenciesCorrectly()
         {
             //  Setting up the stuff required for Configuration.GetConnectionString("DefaultConnection")
-            var configurationSectionStub = new Mock<IConfigurationSection>();
-            configurationSectionStub.Setup(x => x["DoItDbContext"]).Returns("TestConnectionString");
-            var configurationStub = new Mock<Microsoft.Extensions.Configuration.IConfiguration>();
-            configurationStub.Setup(x => x.GetSection("ConnectionStrings")).Returns(configurationSectionStub.Object);
+            var databaseSectionHub = new Mock<IConfigurationSection>();
+            databaseSectionHub.Setup(x => x["DoItDbContext"]).Returns("TestConnectionString");
+
+            var auth0SectionHub = new Mock<IConfigurationSection>();
+            auth0SectionHub.Setup(x => x["Authority"]).Returns("TesAuthority");
+            auth0SectionHub.Setup(x => x["Audience"]).Returns("TestAudience");
+
+            var configurationStub = new Mock<IConfiguration>();
+            configurationStub.Setup(x => x.GetSection("ConnectionStrings")).Returns(databaseSectionHub.Object);
+            configurationStub.Setup(x => x.GetSection("Auth0Settings")).Returns(auth0SectionHub.Object);
 
             IServiceCollection services = new ServiceCollection();
             var target = new Startup(configurationStub.Object);
